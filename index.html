@@ -16,16 +16,15 @@
         </div>
     </main>
     <footer>
-        <div id="admin-section">
-            <input type="password" id="password-input" placeholder="كلمة المرور">
-            <button id="login-btn">تسجيل الدخول</button>
-            <button id="logout-btn" style="display:none;">خروج</button>
-        </div>
+        <!-- زر الإضافة الرئيسي -->
+        <button id="show-add-form-btn">➕ إضافة درس جديد</button>
+
+        <!-- نموذج الإضافة (مخفي) -->
         <div id="add-lesson-form" style="display:none;">
-            <h3>إضافة درس جديد</h3>
+            <h3>إضافة درس</h3>
             <input type="text" id="lesson-title" placeholder="عنوان الدرس" required>
             <input type="file" id="audio-file" accept="audio/*" required>
-            <button id="add-btn">إضافة الدرس</button>
+            <button id="upload-btn">رفع الدرس</button>
             <p id="status-msg"></p>
         </div>
     </footer>

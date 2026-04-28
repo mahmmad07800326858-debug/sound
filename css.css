@@ -1,59 +1,35 @@
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+/* ... التنسيقات السابقة ... */
+
+#show-add-form-btn {
+    background: #e67e22;
+    font-size: 18px;
+    padding: 12px 25px;
+    margin: 20px 0;
+    display: inline-block;
 }
-body {
-    font-family: 'Segoe UI', Tahoma, sans-serif;
-    background: #fefefe;
-    color: #333;
-    line-height: 1.6;
+#show-add-form-btn:hover {
+    background: #d35400;
 }
-header {
-    background: #2c3e50;
-    color: #ecf0f1;
-    padding: 20px;
-    text-align: center;
-}
-main {
-    min-height: 70vh;
-    padding: 20px;
-    max-width: 800px;
-    margin: 0 auto;
-}
-.lesson-item {
-    background: #fff;
-    border: 1px solid #ddd;
-    padding: 15px;
-    margin-bottom: 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-}
-.lesson-item audio {
-    width: 100%;
+
+.download-btn {
+    display: inline-block;
     margin-top: 8px;
-}
-footer {
-    background: #f8f9fa;
-    padding: 20px;
-    text-align: center;
-    border-top: 1px solid #ccc;
-}
-#admin-section {
-    margin-bottom: 15px;
-}
-input, button {
-    padding: 10px;
-    margin: 5px;
-    font-size: 16px;
-}
-button {
-    cursor: pointer;
-    background: #3498db;
-    color: white;
-    border: none;
+    padding: 8px 15px;
+    background: #27ae60;
+    color: #fff;
+    text-decoration: none;
     border-radius: 5px;
+    font-size: 14px;
 }
-button:hover {
-    background: #2980b9;
+.download-btn:hover {
+    background: #219a52;
+}
+
+#add-lesson-form {
+    background: #f1f1f1;
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 15px;
+    display: inline-block;
+    text-align: right;
 }

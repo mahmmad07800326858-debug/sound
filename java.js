@@ -1,26 +1,23 @@
-let isAdmin = false;
 const lessonsContainer = document.getElementById('lessons-container');
-const loginBtn = document.getElementById('login-btn');
-const logoutBtn = document.getElementById('logout-btn');
+const showAddBtn = document.getElementById('show-add-form-btn');
 const addForm = document.getElementById('add-lesson-form');
-const passwordInput = document.getElementById('password-input');
 const lessonTitle = document.getElementById('lesson-title');
 const audioFile = document.getElementById('audio-file');
-const addBtn = document.getElementById('add-btn');
+const uploadBtn = document.getElementById('upload-btn');
 const statusMsg = document.getElementById('status-msg');
 
-// دالة جلب الدروس من data.json
+// تحميل الدروس من الخادم
 async function fetchLessons() {
     try {
-        const res = await fetch('data.json?t=' + new Date().getTime());
+        const res = await fetch('data.json?t=' + Date.now());
         const lessons = await res.json();
         renderLessons(lessons);
-    } catch (error) {
+    } catch (err) {
         lessonsContainer.innerHTML = '<p>تعذر تحميل الدروس.</p>';
     }
 }
 
-// عرض الدروس في الصفحة
+// عرض الدروس مع مشغّل وزر تحميل
 function renderLessons(lessons) {
     if (!lessons.length) {
         lessonsContainer.innerHTML = '<p>لا توجد دروس بعد.</p>';
@@ -33,45 +30,38 @@ function renderLessons(lessons) {
                 <source src="${lesson.file}" type="audio/mpeg">
                 متصفحك لا يدعم تشغيل الصوت.
             </audio>
+            <br>
+            <a href="${lesson.file}" download class="download-btn">⬇️ تحميل الدرس</a>
         </div>
     `).join('');
 }
 
-// تسجيل الدخول كمدير
-loginBtn.addEventListener('click', () => {
-    if (passwordInput.value === '0000') {
-        isAdmin = true;
-        loginBtn.style.display = 'none';
-        passwordInput.style.display = 'none';
-        logoutBtn.style.display = 'inline-block';
+// إظهار نموذج الإضافة بعد التحقق من كلمة المرور
+showAddBtn.addEventListener('click', () => {
+    const password = prompt('أدخل كلمة المرور للإضافة:');
+    if (password === '0000') {
         addForm.style.display = 'block';
+        showAddBtn.style.display = 'none'; // نخفي الزر الأساسي أثناء الإضافة
         statusMsg.textContent = '';
-    } else {
-        alert('كلمة المرور غير صحيحة');
+    } else if (password !== null) {
+        alert('كلمة المرور غير صحيحة!');
     }
 });
 
-// تسجيل الخروج
-logoutBtn.addEventListener('click', () => {
-    isAdmin = false;
-    loginBtn.style.display = 'inline-block';
-    passwordInput.style.display = 'inline-block';
-    passwordInput.value = '';
-    logoutBtn.style.display = 'none';
-    addForm.style.display = 'none';
-    statusMsg.textContent = '';
-});
+// رفع درس جديد
+uploadBtn.addEventListener('click', async () => {
+    const title = lessonTitle.value.trim();
+    const file = audioFile.files[0];
 
-// إضافة درس جديد
-addBtn.addEventListener('click', async () => {
-    if (!lessonTitle.value.trim() || !audioFile.files[0]) {
+    if (!title || !file) {
         statusMsg.textContent = 'يرجى ملء جميع الحقول.';
         return;
     }
+
     const formData = new FormData();
-    formData.append('title', lessonTitle.value.trim());
-    formData.append('audio', audioFile.files[0]);
-    formData.append('password', '0000'); // للتأكيد في الخادم
+    formData.append('title', title);
+    formData.append('audio', file);
+    formData.append('password', '0000'); // تأكيد أمني للخادم
 
     statusMsg.textContent = 'جاري الرفع...';
     try {
@@ -81,7 +71,10 @@ addBtn.addEventListener('click', async () => {
             statusMsg.textContent = 'تمت إضافة الدرس بنجاح!';
             lessonTitle.value = '';
             audioFile.value = '';
-            fetchLessons(); // تحديث فوري
+            // إخفاء نموذج الإضافة وإظهار زر الإضافة مجدداً
+            addForm.style.display = 'none';
+            showAddBtn.style.display = 'inline-block';
+            fetchLessons(); // تحديث فوري للقائمة
         } else {
             statusMsg.textContent = 'خطأ: ' + data.message;
         }
@@ -90,6 +83,6 @@ addBtn.addEventListener('click', async () => {
     }
 });
 
-// تحميل الدروس أول مرة ثم كل 5 ثوانٍ
+// التحميل الأول ثم التحديث كل 5 ثوانٍ
 fetchLessons();
 setInterval(fetchLessons, 5000);

@@ -1,35 +1,90 @@
 /* ... التنسيقات السابقة ... */
 
-#show-add-form-btn {
-    background: #e67e22;
-    font-size: 18px;
-    padding: 12px 25px;
-    margin: 20px 0;
-    display: inline-block;
+/* أزرار التحكم الخاصة بالمدير */
+.admin-btns {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
 }
-#show-add-form-btn:hover {
-    background: #d35400;
+.edit-btn, .delete-btn {
+    padding: 6px 15px;
+    border: none;
+    border-radius: 20px;
+    font-size: 0.9em;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
 }
-
-.download-btn {
-    display: inline-block;
-    margin-top: 8px;
-    padding: 8px 15px;
-    background: #27ae60;
+.edit-btn {
+    background: #f39c12;
     color: #fff;
-    text-decoration: none;
-    border-radius: 5px;
-    font-size: 14px;
 }
-.download-btn:hover {
-    background: #219a52;
+.edit-btn:hover {
+    background: #e67e22;
+}
+.delete-btn {
+    background: #e74c3c;
+    color: #fff;
+}
+.delete-btn:hover {
+    background: #c0392b;
 }
 
-#add-lesson-form {
-    background: #f1f1f1;
+/* نموذج التعديل */
+#edit-lesson-form {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(5px);
     padding: 20px;
     border-radius: 12px;
     margin-top: 15px;
     display: inline-block;
+    width: 100%;
+    max-width: 500px;
     text-align: right;
+    color: #fff;
+}
+#edit-lesson-form h3 {
+    margin-bottom: 15px;
+    font-size: 1.3em;
+}
+#edit-lesson-form input {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 8px;
+    border: none;
+    font-size: 1em;
+}
+#edit-lesson-form small {
+    display: block;
+    margin-bottom: 10px;
+    color: #ddd;
+}
+#edit-lesson-form button {
+    border: none;
+    padding: 12px 25px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 1em;
+    margin-top: 10px;
+    transition: background 0.3s;
+}
+#save-edit-btn {
+    background: #2ecc71;
+    color: #fff;
+}
+#save-edit-btn:hover {
+    background: #27ae60;
+}
+#cancel-edit-btn {
+    background: #95a5a6;
+    color: #fff;
+}
+#cancel-edit-btn:hover {
+    background: #7f8c8d;
+}
+#edit-status-msg {
+    margin-top: 8px;
+    font-weight: bold;
 }

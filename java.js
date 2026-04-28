@@ -1,14 +1,16 @@
+// تأكد من تحميل الصفحة بالكامل
 document.addEventListener('DOMContentLoaded', function() {
-    // عناصر واجهة المستخدم
+
+    // ------------------- العناصر --------------------
     const lessonsContainer = document.getElementById('lessons-container');
     const showAddBtn = document.getElementById('show-add-form-btn');
+    const logoutBtn = document.getElementById('logout-btn');
     const addForm = document.getElementById('add-lesson-form');
     const lessonTitle = document.getElementById('lesson-title');
     const audioFile = document.getElementById('audio-file');
     const uploadBtn = document.getElementById('upload-btn');
     const statusMsg = document.getElementById('status-msg');
 
-    // عناصر نموذج التعديل
     const editForm = document.getElementById('edit-lesson-form');
     const editLessonId = document.getElementById('edit-lesson-id');
     const editLessonTitle = document.getElementById('edit-lesson-title');
@@ -20,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // حالة المدير
     let isAdmin = false;
 
-    // دوال مساعدة
+    // ------------------- دوال مساعدة --------------------
     function formatSize(bytes) {
         if (!bytes) return 'غير معروف';
         const units = ['ب', 'ك.ب', 'م.ب', 'ج.ب'];
@@ -57,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // جلب الدروس
+    // ------------------- جلب وعرض الدروس --------------------
     async function fetchLessons() {
         try {
             const res = await fetch('data.json?t=' + Date.now());
@@ -69,7 +71,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // عرض الدروس مع أزرار التحكم إذا كان مديراً
     async function renderLessons(lessons) {
         if (!lessons.length) {
             lessonsContainer.innerHTML = '<p>لا توجد دروس بعد.</p>';
@@ -103,7 +104,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }));
         lessonsContainer.innerHTML = items.join('');
 
-        // ربط أحداث أزرار التعديل والحذف
+        // ربط أزرار التعديل والحذف إذا كان مدير
         if (isAdmin) {
             document.querySelectorAll('.edit-btn').forEach(btn => {
                 btn.addEventListener('click', openEditForm);
@@ -114,24 +115,39 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // تسجيل الدخول كمدير
-    showAddBtn.addEventListener('click', () => {
+    // ------------------- تسجيل الدخول (ظهور زر الإضافة) --------------------
+    showAddBtn.addEventListener('click', function() {
+        // للتأكد من الضغط (في console)
+        console.log('تم الضغط على زر إضافة درس');
         const password = prompt('أدخل كلمة المرور للإضافة:');
-        if (password === null) return;
+        if (password === null) return; // ألغى
         if (password === '0000') {
             isAdmin = true;
             showAddBtn.style.display = 'none';
+            logoutBtn.style.display = 'inline-block';
             addForm.style.display = 'block';
             statusMsg.textContent = '';
-            // إعادة تحميل الدروس لإظهار أزرار التعديل والحذف
+            // إخفاء نموذج التعديل إن كان ظاهراً
+            editForm.style.display = 'none';
+            // إعادة عرض الدروس مع أزرار التحكم
             fetchLessons();
         } else {
             alert('❌ كلمة المرور غير صحيحة!');
         }
     });
 
-    // إضافة درس جديد
-    uploadBtn.addEventListener('click', async () => {
+    // ------------------- تسجيل الخروج --------------------
+    logoutBtn.addEventListener('click', function() {
+        isAdmin = false;
+        showAddBtn.style.display = 'inline-block';
+        logoutBtn.style.display = 'none';
+        addForm.style.display = 'none';
+        editForm.style.display = 'none';
+        fetchLessons(); // إخفاء أزرار التحكم
+    });
+
+    // ------------------- إضافة درس --------------------
+    uploadBtn.addEventListener('click', async function() {
         const title = lessonTitle.value.trim();
         const file = audioFile.files[0];
         if (!title || !file) {
@@ -153,20 +169,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 statusMsg.textContent = '✅ تمت إضافة الدرس بنجاح!';
                 lessonTitle.value = '';
                 audioFile.value = '';
-                // لا نعيد إظهار زر الإضافة، نبقى في وضع الإدارة
-                fetchLessons();
+                fetchLessons(); // تحديث
             } else {
                 statusMsg.textContent = 'خطأ: ' + data.message;
             }
         } catch (err) {
             statusMsg.textContent = 'فشل الاتصال بالخادم.';
+            console.error(err);
         }
     });
 
-    // فتح نموذج تعديل الدرس
+    // ------------------- تعديل درس --------------------
     async function openEditForm(e) {
         const id = e.target.dataset.id;
-        // نجلب الدرس من البيانات المخزنة محلياً (نعيد fetch لضمان الدقة)
         const res = await fetch('data.json?t=' + Date.now());
         const lessons = await res.json();
         const lesson = lessons.find(l => l.id == id);
@@ -177,17 +192,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
         editLessonId.value = lesson.id;
         editLessonTitle.value = lesson.title;
-        editAudioFile.value = ''; // إفراغ حقل الملف
+        editAudioFile.value = '';
         editStatusMsg.textContent = '';
 
-        // إخفاء نماذج أخرى وإظهار نموذج التعديل
+        // إخفاء نماذج أخرى
         addForm.style.display = 'none';
         editForm.style.display = 'block';
-        showAddBtn.style.display = 'none'; // يبقى مخفياً
+        logoutBtn.style.display = 'inline-block'; // يبقى
+        showAddBtn.style.display = 'none';
     }
 
-    // حفظ التعديلات
-    saveEditBtn.addEventListener('click', async () => {
+    saveEditBtn.addEventListener('click', async function() {
         const id = editLessonId.value;
         const newTitle = editLessonTitle.value.trim();
         const newFile = editAudioFile.files[0];
@@ -211,9 +226,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const res = await fetch('add.php', { method: 'POST', body: formData });
             const data = await res.json();
             if (data.success) {
-                editStatusMsg.textContent = '✅ تم تحديث الدرس بنجاح';
-                // العودة إلى وضع الإضافة (أو البقاء)
+                editStatusMsg.textContent = '✅ تم تحديث الدرس';
                 editForm.style.display = 'none';
+                // العودة لنموذج الإضافة
+                addForm.style.display = 'block';
                 fetchLessons();
             } else {
                 editStatusMsg.textContent = 'خطأ: ' + data.message;
@@ -223,16 +239,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // إلغاء التعديل
-    cancelEditBtn.addEventListener('click', () => {
+    cancelEditBtn.addEventListener('click', function() {
         editForm.style.display = 'none';
-        // العودة إلى نموذج الإضافة (لأننا دخلنا كمدير)
         addForm.style.display = 'block';
-        showAddBtn.style.display = 'none';
         editStatusMsg.textContent = '';
     });
 
-    // حذف درس
+    // ------------------- حذف درس --------------------
     async function deleteLesson(e) {
         const id = e.target.dataset.id;
         if (!confirm('هل أنت متأكد من حذف هذا الدرس؟')) return;
@@ -255,7 +268,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // تحميل الدروس أول مرة وتحديث تلقائي
+    // ------------------- بدء التشغيل --------------------
     fetchLessons();
-    setInterval(fetchLessons, 5000);
+    setInterval(fetchLessons, 5000); // تحديث تلقائي
 });

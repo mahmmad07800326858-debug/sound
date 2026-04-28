@@ -9,7 +9,7 @@
 <body>
     <header>
         <h1>آية الله السيد علي السبزواري</h1>
-        <p>دروس صوتية</p>
+        <p>الدروس الصوتية</p>
     </header>
 
     <main>
@@ -19,9 +19,13 @@
     </main>
 
     <footer>
-        <button id="show-add-form-btn">➕ إضافة درس جديد</button>
+        <!-- أزرار الإدارة -->
+        <div id="admin-buttons">
+            <button id="show-add-form-btn">➕ إضافة درس جديد</button>
+            <button id="logout-btn" style="display:none;">🚪 خروج من الإدارة</button>
+        </div>
 
-        <!-- نموذج الإضافة (يظهر بعد كلمة المرور) -->
+        <!-- نموذج إضافة درس (يظهر بعد كلمة المرور) -->
         <div id="add-lesson-form" style="display:none;">
             <h3>إضافة درس جديد</h3>
             <input type="text" id="lesson-title" placeholder="عنوان الدرس" required>
@@ -30,13 +34,13 @@
             <p id="status-msg"></p>
         </div>
 
-        <!-- نموذج التعديل (يظهر عند اختيار درس لتعديله) -->
+        <!-- نموذج تعديل درس (يظهر عند اختيار تعديل) -->
         <div id="edit-lesson-form" style="display:none;">
             <h3>تعديل الدرس</h3>
             <input type="hidden" id="edit-lesson-id">
             <input type="text" id="edit-lesson-title" placeholder="عنوان الدرس" required>
             <input type="file" id="edit-audio-file" accept="audio/*">
-            <small>اترك الملف فارغاً إذا لم ترد تغيير الصوت</small>
+            <small>اترك الملف فارغاً للاحتفاظ بالصوت الحالي</small>
             <button id="save-edit-btn">حفظ التعديلات</button>
             <button id="cancel-edit-btn">إلغاء</button>
             <p id="edit-status-msg"></p>

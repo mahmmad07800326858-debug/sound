@@ -16,7 +16,7 @@ if ($password !== $correctPassword) {
 
 $action = $_POST['action'] ?? 'add';
 
-// دالة قراءة الدروس
+// دوال مساعدة
 function getLessons() {
     global $dataFile;
     if (!file_exists($dataFile)) return [];
@@ -24,16 +24,13 @@ function getLessons() {
     return is_array($lessons) ? $lessons : [];
 }
 
-// دالة حفظ الدروس
 function saveLessons($lessons) {
     global $dataFile;
     file_put_contents($dataFile, json_encode($lessons, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
 }
 
-// تنفيذ الإجراء المطلوب
 switch ($action) {
     case 'add':
-        // إضافة درس (موجود سابقاً)
         $title = trim($_POST['title'] ?? '');
         if ($title === '') {
             echo json_encode(['success' => false, 'message' => 'عنوان الدرس مطلوب']);
@@ -57,7 +54,6 @@ switch ($action) {
             exit;
         }
         $lessons = getLessons();
-        // إنشاء id فريد (أعلى id + 1)
         $maxId = 0;
         foreach ($lessons as $l) {
             if (isset($l['id']) && $l['id'] > $maxId) $maxId = $l['id'];
@@ -84,7 +80,6 @@ switch ($action) {
         $found = false;
         foreach ($lessons as $i => $lesson) {
             if ($lesson['id'] == $id) {
-                // حذف الملف الصوتي
                 if (file_exists($lesson['file'])) {
                     unlink($lesson['file']);
                 }
@@ -117,7 +112,6 @@ switch ($action) {
         foreach ($lessons as &$lesson) {
             if ($lesson['id'] == $id) {
                 $lesson['title'] = $newTitle;
-                // إذا تم رفع ملف جديد
                 if (isset($_FILES['audio']) && $_FILES['audio']['error'] === UPLOAD_ERR_OK) {
                     $file = $_FILES['audio'];
                     $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
@@ -126,7 +120,6 @@ switch ($action) {
                         echo json_encode(['success' => false, 'message' => 'نوع الملف غير مسموح به']);
                         exit;
                     }
-                    // حذف الملف القديم
                     if (file_exists($lesson['file'])) {
                         unlink($lesson['file']);
                     }
@@ -138,7 +131,7 @@ switch ($action) {
                     }
                     $lesson['file'] = $destination;
                     $lesson['size'] = filesize($destination);
-                    $lesson['date'] = date('Y-m-d H:i:s'); // تحديث التاريخ
+                    $lesson['date'] = date('Y-m-d H:i:s');
                 }
                 $updated = true;
                 break;
@@ -155,3 +148,4 @@ switch ($action) {
     default:
         echo json_encode(['success' => false, 'message' => 'إجراء غير معروف']);
 }
+?>

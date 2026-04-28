@@ -1,7 +1,0 @@
-site/
-├── index.html
-├── style.css
-├── script.js
-├── add.php
-├── data.json   (يحتوي [])
-└── uploads/    (مجلد)
